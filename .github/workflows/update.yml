@@ -1,0 +1,46 @@
+name: Update Sidelight
+
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Published version tag (empty means latest stable)"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-sidelight
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test updater
+        run: python3 -m unittest discover -s tests
+      - name: Verify upstream release and update cask
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.tag }}
+        run: python3 scripts/update_cask.py --tag "$RELEASE_TAG"
+      - name: Check cask style
+        run: brew style --cask Casks/sidelight.rb
+      - name: Publish update
+        run: |
+          if git diff --quiet -- Casks/sidelight.rb; then
+            echo "Tap is already current."
+            exit 0
+          fi
+          VERSION=$(sed -n 's/^  version "\(.*\)"/\1/p' Casks/sidelight.rb)
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add Casks/sidelight.rb
+          git commit -m "Update Sidelight to $VERSION"
+          git push origin HEAD:main

@@ -1,0 +1,26 @@
+name: Check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: macos-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - run: python3 -m unittest discover -s tests
+      - run: brew style --cask Casks/sidelight.rb
+      - name: Audit cask
+        env:
+          HOMEBREW_GITHUB_API_TOKEN: ${{ github.token }}
+        run: |
+          brew tap 50bytesofjohn/tap "$GITHUB_WORKSPACE"
+          brew trust --cask 50bytesofjohn/tap/sidelight
+          brew audit --cask --online 50bytesofjohn/tap/sidelight
