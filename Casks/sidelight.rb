@@ -1,6 +1,6 @@
 cask "sidelight" do
-  version "0.6.1"
-  sha256 "611fc2ce3b3a482d96ce77539f307aef05c9f0ea39fb2178a2713d8d91d9394f"
+  version "0.7.0"
+  sha256 "9fe76b51623785300a080837a9b0385730d01779743625a8e1c8a3e9099183d8"
 
   url "https://github.com/50BytesOfJohn/sidelight/releases/download/v#{version}/Sidelight-#{version}.dmg"
   name "Sidelight"
