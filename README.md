@@ -36,5 +36,5 @@ The updater verifies the published release, the downloaded DMG's SHA-256 and siz
 published checksum file before updating. It refuses drafts, prereleases, downgrades and changed
 checksums for an existing version. Neither workflow replaces upstream release assets.
 
-Run `python3 -m unittest discover -s tests` and `brew style --cask Casks/sidelight.rb` before
+Run `python3 -m unittest discover -s tests` and `brew style --cask 50bytesofjohn/tap/sidelight` before
 changing the updater or cask. The Check workflow also audits the cask online.

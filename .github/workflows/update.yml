@@ -31,7 +31,11 @@ jobs:
           RELEASE_TAG: ${{ inputs.tag }}
         run: python3 scripts/update_cask.py --tag "$RELEASE_TAG"
       - name: Check cask style
-        run: brew style --cask Casks/sidelight.rb
+        run: |
+          brew tap 50bytesofjohn/tap "$GITHUB_WORKSPACE"
+          brew trust --cask 50bytesofjohn/tap/sidelight
+          cp Casks/sidelight.rb "$(brew --repository 50bytesofjohn/tap)/Casks/sidelight.rb"
+          brew style --cask 50bytesofjohn/tap/sidelight
       - name: Publish update
         run: |
           if git diff --quiet -- Casks/sidelight.rb; then
